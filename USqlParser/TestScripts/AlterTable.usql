@@ -1,0 +1,1 @@
+﻿ALTER TABLE Publish.dbo.Yolo REBUILD;

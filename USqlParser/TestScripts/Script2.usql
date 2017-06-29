@@ -1,0 +1,34 @@
+﻿USE DATABASE UDP_Publish;
+
+CREATE SCHEMA IF NOT EXISTS Transform;
+
+DROP TABLE IF EXISTS Transform.dCurrency;
+
+CREATE TABLE Transform.dCurrency
+(
+    [CurrencyKey]   string,
+    [CurrencyCode]	string, 
+	[CurrencyId]	byte, 
+	[CurrencyName]	string, 
+	[PlatformCreatedDate] DateTime,
+	[PlatformModifiedDate] DateTime,
+	[PartitionedBySlice] DateTime,
+	INDEX CIX_MSSales_Currency CLUSTERED([CurrencyId])
+	PARTITIONED BY ([PartitionedBySlice])
+	DISTRIBUTED BY HASH ([CurrencyId])
+);
+
+DECLARE @DefaultPartition DateTime = new DateTime(1900,01,01,00,00,00,00,DateTimeKind.Utc);
+ALTER TABLE Transform.dCurrency ADD PARTITION (@DefaultPartition);
+
+INSERT INTO Transform.dCurrency(
+	[CurrencyKey],
+	[CurrencyCode],
+	[CurrencyId],
+	[CurrencyName],
+	[PlatformCreatedDate],
+	[PlatformModifiedDate])
+
+PARTITION(@DefaultPartition)
+
+VALUES("UNKNOWN", "UNKNOWN", (byte)0, "UNKNOWN", @DefaultPartition, @DefaultPartition);
