@@ -1,0 +1,12 @@
+﻿CREATE DATABASE HelloW;
+
+CREATE TABLE dbo.Employees
+(
+    EmpID int,
+    EmpName string,
+    DeptID int,
+    Salary int?,
+    StartDate DateTime
+);
+
+CREATE DATABASE HelloW;

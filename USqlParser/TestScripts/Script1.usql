@@ -1,0 +1,56 @@
+USE DATABASE UDP_Publish;
+
+CREATE SCHEMA IF NOT EXISTS SalesDataHub;
+
+DROP TABLE IF EXISTS SalesDataHub.vw_DynamicProperty;
+
+CREATE TABLE SalesDataHub.vw_DynamicProperty
+(
+	[DefaultValueOptionSet]	Guid?, 
+	[DefaultValueString]	string, 
+	[Description]	string, 
+	[DynamicPropertyId]	Guid, 
+	[IsHidden]	bool?, 
+	[IsReadOnly]	bool?, 
+	[IsRequired]	bool?, 
+	[MaxLengthString]	int?, 
+	[MaxValueDecimal]	decimal?, 
+	[MaxValueDouble]	decimal?, 
+	[MaxValueInteger]	int?, 
+	[BaseDynamicPropertyId]	Guid?, 
+	[CreatedById]	Guid?, 
+	[CreatedDate]	DateTime?, 
+	[CrmInstanceId]	Guid?, 
+	[DataTypeSeqNo]	long?, 
+	[DefaultValueDecimal]	decimal?, 
+	[DefaultValueDouble]	decimal?, 
+	[DefaultValueInteger]	int?, 
+	[MinValueDecimal]	decimal?, 
+	[MinValueDouble]	decimal?, 
+	[MinValueInteger]	int?, 
+	[ModifiedById]	Guid?, 
+	[ModifiedDate]	DateTime?, 
+	[Name]	string, 
+	[OdsCreatedDate]	DateTime, 
+	[OdsModifiedDate]	DateTime, 
+	[OdsStatus]	byte?, 
+	[OverwrittenDynamicPropertyId]	Guid?, 
+	[Precision]	int?, 
+	[RegardingEntityName]	string, 
+	[RegardingObjectId]	Guid?, 
+	[RootDynamicPropertyId]	Guid?, 
+	[StatusReasonSeqNo]	long?, 
+	[StatusSeqNo]	long?, 
+	[VersionNumber]	long?, 
+	[PlatformCreatedDate] DateTime,
+	[PlatformModifiedDate] DateTime,
+	[PartitionedBySlice] DateTime,
+	INDEX CIX_SalesDataHub_vw_DynamicProperty CLUSTERED([DynamicPropertyId])
+	PARTITIONED BY ([PartitionedBySlice])
+	DISTRIBUTED BY HASH ([DynamicPropertyId])
+);
+
+DECLARE @SliceDate DateTime=new DateTime(1901,01,01,00,00,00,00,DateTimeKind.Utc);
+
+ALTER TABLE SalesDataHub.vw_DynamicProperty ADD PARTITION (@SliceDate);
+
