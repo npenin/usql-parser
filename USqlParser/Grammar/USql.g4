@@ -198,7 +198,7 @@ integrityClause
 	;
 
 rowConstructorList
-	: '(' ~( ',' )* ( ',' ~( ',' )* )* ')'
+	: '(' staticExpression ( ',' staticExpression )* ')'
 	;
 
 tableValueConstructorExpression
