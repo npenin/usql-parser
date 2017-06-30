@@ -74,13 +74,6 @@
       <Visitor>True</Visitor>
     </Antlr4>
     <None Include="packages.config" />
-    <None Include="TestScripts\AlterTable.usql" />
-    <None Include="TestScripts\AlterTablePartitions.usql" />
-    <None Include="TestScripts\CreateTable.usql" />
-    <None Include="TestScripts\DbTableCombined.usql" />
-    <None Include="TestScripts\Declare.usql" />
-    <None Include="TestScripts\Script1.usql" />
-    <None Include="TestScripts\Script2.usql" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

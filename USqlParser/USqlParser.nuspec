@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AnirudhRb.USqlParser</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Anirudh Rayabharam</authors>
+    <owners>Anirudh Rayabharam</owners>
+    <licenseUrl>https://github.com/anirudhrb/usql-parser/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/anirudhrb/usql-parser</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A U-SQL Parser</description>
+    <releaseNotes>Initial version.</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>U-SQL Grammar Parser</tags>
+  </metadata>
+</package>
