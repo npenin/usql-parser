@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AnirudhRb.USqlParser</id>
-    <version>1.1</version>
+    <version>1.2</version>
     <title>$title$</title>
     <authors>Anirudh Rayabharam</authors>
     <owners>Anirudh Rayabharam</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/anirudhrb/usql-parser</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A U-SQL Parser</description>
-    <releaseNotes>Support for digits in identifiers</releaseNotes>
+    <releaseNotes>Rewritten identifier rules.</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>U-SQL Grammar Parser</tags>
   </metadata>

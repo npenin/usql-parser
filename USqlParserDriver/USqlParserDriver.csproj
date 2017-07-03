@@ -64,6 +64,7 @@
     <None Include="TestScripts\Script1.usql" />
     <None Include="TestScripts\Script2.usql" />
     <None Include="TestScripts\Script3.usql" />
+    <None Include="TestScripts\Script4.usql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\USqlParser\USqlParser.csproj">
