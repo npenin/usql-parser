@@ -145,15 +145,20 @@ declareVariableStatement
 	: 'DECLARE' variable builtInType '=' ~( ';' )* ';'
 	; 
 
+staticVariable
+	: builtInType '.' UnquotedIdentifier 
+	;
+
 /*
  * TODO: Include StaticVariable and BinaryLiteral. Need to figure it out.
  */
 staticExpression
-	: StringLiteral
+	: ( '(' builtInType ')' )? ( StringLiteral
 	| CharLiteral
-	| numberLiteral
+	| NumberLiteral
 	| userVariable
 	| GuidInitializer
+	| staticVariable )
 	;
 
 staticExpressionList
@@ -208,13 +213,6 @@ insertStatement
 	;
 
 /*
- * TODO: Improve the number literal rule to include floats, hex, octal, long etc. More research needed.
- */
-numberLiteral
-	: ( NumberCharacter )+
-	;
-
-/*
  * Lexer rules
  * TODO: make upper case
  */
@@ -263,6 +261,10 @@ DROP
 	: 'DROP'
 	;
 
+fragment DateTime
+	: 'DateTime'
+	;
+
 CharLiteral
 	: '\'' . '\''
 	;
@@ -288,7 +290,7 @@ TextualType
 	;
 
 TemporalType
-	: 'DateTime' | 'DateTime?'
+	: DateTime | DateTime '?'
 	;
 
 OtherType
@@ -307,7 +309,7 @@ fragment LetterCharacter
 	: ( 'a' .. 'z' | 'A' .. 'Z' )
 	;
 
-NumberCharacter 
+fragment NumberCharacter 
 	: ( '0' .. '9' )
 	;
 
@@ -353,4 +355,11 @@ UnquotedIdentifier
 
 QuotedIdentifier
 	: '[' ( LetterCharacter | NumberCharacter | ConnectingCharacter | CombiningCharacter | AnyUnicodeCpLessQuotes | EscapedQuote ) ( LetterCharacter | NumberCharacter | ConnectingCharacter | CombiningCharacter | AnyUnicodeCpLessQuotes | EscapedQuote )* ']'
+	;
+
+/*
+ * TODO: Improve the number literal rule to include floats, hex, octal, long etc. More research needed.
+ */
+NumberLiteral
+	: ( '-' )? ( NumberCharacter )+
 	;
