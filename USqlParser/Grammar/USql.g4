@@ -153,6 +153,7 @@ staticExpression
 	| CharLiteral
 	| numberLiteral
 	| userVariable
+	| GuidInitializer
 	;
 
 staticExpressionList
@@ -262,6 +263,22 @@ DROP
 	: 'DROP'
 	;
 
+CharLiteral
+	: '\'' . '\''
+	;
+
+StringLiteral
+	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '_' )+ '"'
+	;
+
+GuidLiteral
+	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '-' | '0'..'9' )+ '"'
+	;
+
+GuidInitializer
+	: 'new Guid(' GuidLiteral ')'
+	;
+
 NumericTypeNonNullable
 	: 'byte' | 'sbyte' | 'int' | 'uint' | 'long' | 'ulong' | 'float' | 'double' | 'decimal' | 'short' | 'ushort'
 	;
@@ -276,14 +293,6 @@ TemporalType
 
 OtherType
 	: 'bool' | 'bool?' | 'Guid' | 'Guid?' | 'byte[]'
-	;
-
-CharLiteral
-	: '\'' . '\''
-	;
-
-StringLiteral
-	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '_' )+ '"'
 	;
 
 NEWLINE
