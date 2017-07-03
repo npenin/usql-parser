@@ -1,0 +1,12 @@
+﻿CREATE TABLE IF NOT EXISTS SomeScchema.xYZ
+(
+	HelloWorld        		System.Int32,
+	SomeKey        		System.Int32?,
+	EffectiveStartDate      System.DateTime,
+	EffectiveEndDate        System.DateTime,
+	IsCurrent        		System.Boolean,
+	PartitionedBySlice		System.DateTime,
+    INDEX clx_SomeKey CLUSTERED(SomeKey ASC)
+	PARTITIONED BY (PartitionedBySlice)
+	DISTRIBUTED BY HASH(SomeKey)
+);

@@ -282,19 +282,19 @@ GuidInitializer
 	;
 
 NumericTypeNonNullable
-	: 'byte' | 'sbyte' | 'int' | 'uint' | 'long' | 'ulong' | 'float' | 'double' | 'decimal' | 'short' | 'ushort'
+	: 'byte' | 'sbyte' | 'int' | 'uint' | 'long' | 'ulong' | 'float' | 'double' | 'decimal' | 'short' | 'ushort' | 'System.Int32'
 	;
 
 TextualType
-	: 'char' | 'char?' | 'string'
+	: 'char' | 'char?' | 'string' | 'System.String'
 	;
 
 TemporalType
-	: DateTime | DateTime '?'
+	: DateTime | DateTime '?' | 'System.' DateTime
 	;
 
 OtherType
-	: 'bool' | 'bool?' | 'Guid' | 'Guid?' | 'byte[]'
+	: 'bool' | 'bool?' | 'Guid' | 'Guid?' | 'byte[]' | 'System.Boolean'
 	;
 
 NEWLINE
