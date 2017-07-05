@@ -1,14 +1,14 @@
 ﻿using System;
-using NUnit.Framework;
 using System.IO;
 using System.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace USqlParserTests
 {
-    [TestFixture]
+    [TestClass]
     public class USqlGrammarTest
     {
-        [Test]
+        [TestMethod]
         public void TestAllSamples()
         {
             var binariesDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
