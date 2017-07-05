@@ -1,6 +1,6 @@
 ﻿namespace AnirudhRb.USql
 {
-    partial class USqlLexer
+    public partial class USqlLexer
     {
     }
 }
