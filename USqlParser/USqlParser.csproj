@@ -64,14 +64,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Grammar\USqlLexer.g4.cs">
+      <DependentUpon>USqlLexer.g4</DependentUpon>
+    </Compile>
+    <Compile Include="Grammar\USqlParser.g4.cs">
+      <DependentUpon>USqlParser.g4</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="Grammar\USql.g4">
+    <Antlr4 Include="Grammar\USqlLexer.g4">
       <Generator>MSBuild:Compile</Generator>
-      <CustomToolNamespace>AnirudhRb.USqlParser</CustomToolNamespace>
-      <Listener>True</Listener>
-      <Visitor>True</Visitor>
+      <CustomToolNamespace>AnirudhRb.USql</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="Grammar\USqlParser.g4">
+      <Generator>MSBuild:Compile</Generator>
+      <CustomToolNamespace>AnirudhRb.USql</CustomToolNamespace>
     </Antlr4>
     <None Include="packages.config" />
     <None Include="USqlParser.nuspec" />

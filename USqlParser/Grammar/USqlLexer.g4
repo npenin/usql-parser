@@ -1,228 +1,15 @@
-﻿ grammar USql;
-
-
-/*
- * Parser rules
- */
-
-prog
-	: createDatabaseStatement prog
-	| createManagedTableWithSchemaStatement prog
-	| alterTableStatement prog
-	| alterTableAddDropPartitionStatement prog
-	| dropTableStatement prog
-	| createSchemaStatement prog
-	| declareVariableStatement prog
-	| useDatabaseStatement prog
-	| insertStatement prog
-    | EOF
-	;
-
-createDatabaseStatement
-	: CREATE DATABASE ( IF NOT EXISTS )? dbName ';'
-	;
-
-dbName
-	: quotedOrUnquotedIdentifier
-	;
-
-quotedOrUnquotedIdentifier
-	: QuotedIdentifier
-	| UnquotedIdentifier
-	;
-
-multipartIdentifier
-	: quotedOrUnquotedIdentifier
-	| quotedOrUnquotedIdentifier '.' quotedOrUnquotedIdentifier
-	| quotedOrUnquotedIdentifier '.' quotedOrUnquotedIdentifier '.' quotedOrUnquotedIdentifier
-	;
-
-useDatabaseStatement
-	: 'USE' DATABASE dbName ';'
-	;
-
-numericType
-	: NumericTypeNonNullable
-	| NumericTypeNonNullable '?'
-	;
-
-simpleType
-	: numericType
-	| TextualType
-	| TemporalType
-	| OtherType
-	;
-
-builtInType
-	: simpleType
-	;
-
-createSchemaStatement
-	: CREATE SCHEMA ( IF NOT EXISTS )? quotedOrUnquotedIdentifier ';'
-	;
-
-columnDefinition
-	: quotedOrUnquotedIdentifier builtInType
-	;
-
-tableWithSchema
-	: ( '(' ( columnDefinition ',' )*
-		( tableIndex partitionSpecification )?
-		  ( ',' columnDefinition )* ')' )
-	| ( '(' ( columnDefinition ',' )*
-		( tableIndex )
-			( ',' columnDefinition )* ')' partitionSpecification )
-	;
-
-tableName
-	: multipartIdentifier
-	;
-
-createManagedTableWithSchemaStatement
-	: CREATE TABLE ( IF NOT EXISTS )? tableName tableWithSchema ';'
-	;
-
-sortDirection
-	: 'ASC' | 'DESC'
-	;
-
-sortItem
-	: quotedOrUnquotedIdentifier ( sortDirection )?
-	;
-
-sortItemList
-	: sortItem ( ',' sortItem )*
-	;
-
-tableIndex
-	: INDEX quotedOrUnquotedIdentifier CLUSTERED '(' sortItemList ')'
-	;
-
-identifierList
-	: quotedOrUnquotedIdentifier ( ',' quotedOrUnquotedIdentifier )*
-	;
-
-distributionScheme
-	: 'RANGE' '(' sortItemList ')'
-	| 'HASH' '(' identifierList ')'
-	| 'DIRECT' 'HASH' '(' quotedOrUnquotedIdentifier ')'
-	| 'ROUND' 'ROBIN'
-	;
-
-distributionSpecification
-	: 'DISTRIBUTED' ( 'BY' )? distributionScheme
-	;
-
-partitionSpecification
-	: ( 'PARTITIONED' ( 'BY' )? '(' identifierList ')' )? distributionSpecification
-	;
-
-columnDefinitionList
-	: '(' columnDefinition ( ',' columnDefinition )* ')'
-	;
-
-alterTableStatement
-	: 'ALTER' 'TABLE' multipartIdentifier
-	  ( 'REBUILD' 
-	  | ADD 'COLUMN' columnDefinitionList
-	  | DROP 'COLUMN' identifierList ) ';'
-	;
-
-systemVariable
-	: '@@' UnquotedIdentifier
-	;
-
-userVariable
-	: '@' UnquotedIdentifier
-	;
-
-variable
-	: systemVariable
-	| userVariable
-	;
-
-declareVariableStatement
-	: 'DECLARE' variable builtInType '=' ~( ';' )* ';'
-	; 
-
-staticVariable
-	: builtInType '.' UnquotedIdentifier 
-	;
-
-/*
- * TODO: Include StaticVariable and BinaryLiteral. Need to figure it out.
- */
-staticExpression
-	: ( '(' builtInType ')' )? ( StringLiteral
-	| CharLiteral
-	| NumberLiteral
-	| userVariable
-	| GuidInitializer
-	| staticVariable )
-	;
-
-staticExpressionList
-	: staticExpression ( ',' staticExpression )*
-	;
-
-staticExpressionRowConstructor
-	: '(' staticExpressionList ')'
-	;
-
-partitionLabel
-	: 'PARTITION' staticExpressionRowConstructor
-	;
-
-partitionLabelList
-	: partitionLabel ( ',' partitionLabel )*
-	;
-
-alterTableAddDropPartitionStatement
-	: 'ALTER' 'TABLE' multipartIdentifier
-	   ( ADD ( IF NOT EXISTS )? | DROP ( IF NOT EXISTS )? ) partitionLabelList ';'
-	;
-
-dropTableStatement
-	: DROP TABLE ( IF EXISTS )? multipartIdentifier ';'
-	;
-
-integrityViolationAction
-	: 'IGNORE'
-	| 'MOVE' 'TO' partitionLabel
-	;
-
-integrityClause
-	: 'ON' 'INTEGRITY' 'VIOLATION' integrityViolationAction
-	;
-
-rowConstructorList
-	: '(' staticExpression ( ',' staticExpression )* ')'
-	;
-
-tableValueConstructorExpression
-	: 'VALUES' rowConstructorList
-	;
-
-insertSource
-	: tableValueConstructorExpression
-	;
-
-insertStatement
-	: 'INSERT' 'INTO' multipartIdentifier ( '(' identifierList ')' )?
-	  ( partitionLabel | integrityClause )? insertSource ';'
-	;
-
-/*
- * Lexer rules
- * TODO: make upper case
- */
+lexer grammar USqlLexer;
 
 CREATE
-	: 'create' | 'CREATE'
+	: 'CREATE'
+	;
+
+ALTER
+	: 'ALTER'
 	;
 
 DATABASE
-	: 'database' | 'DATABASE'
+	: 'DATABASE'
 	;
 
 SCHEMA
@@ -233,12 +20,24 @@ TABLE
 	: 'TABLE'
 	;
 
+COLUMN
+	: 'COLUMN'
+	;
+
+REBUILD
+	: 'REBUILD'
+	;
+
 INDEX
 	: 'INDEX'
 	;
 
 CLUSTERED
 	: 'CLUSTERED'
+	;
+
+DECLARE
+	: 'DECLARE'
 	;
 
 IF
@@ -261,10 +60,97 @@ DROP
 	: 'DROP'
 	;
 
+USE
+	: 'USE'
+	;
+
+INSERT
+	: 'INSERT'
+	;
+
+INTO
+	: 'INTO'
+	;
+
+VALUES
+	: 'VALUES'
+	;
+
+ASC
+	: 'ASC'
+	;
+
+DESC
+	: 'DESC'
+	;
+
+RANGE
+	: 'RANGE'
+	;
+
+HASH
+	: 'HASH'
+	;
+
+DIRECT
+	: 'DIRECT'
+	;
+
+ROUND
+	: 'ROUND'
+	;
+
+ROBIN
+	: 'ROBIN'
+	;
+
+DISTRIBUTED
+	: 'DISTRIBUTED'
+	;
+
+PARTITIONED
+	: 'PARTITIONED'
+	;
+
+PARTITION
+	: 'PARTITION'
+	;
+
+BY
+	: 'BY'
+	;
+
+ON
+	: 'ON'
+	;
+
+IGNORE
+	: 'IGNORE'
+	;
+
+MOVE
+	: 'MOVE'
+	;
+
+TO
+	: 'TO'
+	;
+
+INTEGRITY
+	: 'INTEGRITY'
+	;
+
+VIOLATION
+	: 'VIOLATION'
+	;
+
 fragment DateTime
 	: 'DateTime'
 	;
 
+/*
+ * Literals
+ */
 CharLiteral
 	: '\'' . '\''
 	;
@@ -275,6 +161,14 @@ StringLiteral
 
 GuidLiteral
 	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '-' | '0'..'9' )+ '"'
+	;
+
+NumberLiteral
+	: ( '-' )? ( NumberCharacter )+
+	;
+
+NullLiteral
+	: 'null'
 	;
 
 GuidInitializer
@@ -357,9 +251,38 @@ QuotedIdentifier
 	: '[' ( LetterCharacter | NumberCharacter | ConnectingCharacter | CombiningCharacter | AnyUnicodeCpLessQuotes | EscapedQuote ) ( LetterCharacter | NumberCharacter | ConnectingCharacter | CombiningCharacter | AnyUnicodeCpLessQuotes | EscapedQuote )* ']'
 	;
 
-/*
- * TODO: Improve the number literal rule to include floats, hex, octal, long etc. More research needed.
- */
-NumberLiteral
-	: ( '-' )? ( NumberCharacter )+
+SystemVariable
+	: '@@' UnquotedIdentifier
+	;
+
+UserVariable
+	: '@' UnquotedIdentifier
+	;
+
+DOT
+	: '.'
+	;
+
+SEMICOLON
+	: ';'
+	;
+
+QUESTIONMARK
+	: '?'
+	;
+
+LPAREN
+	: '('
+	;
+
+RPAREN
+	: ')'
+	;
+
+COMMA
+	: ','
+	;
+
+EQUALS
+	: '='
 	;

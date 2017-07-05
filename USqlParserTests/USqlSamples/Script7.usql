@@ -4,7 +4,7 @@
 	SomeKey        		System.Int32?,
 	EffectiveStartDate      System.DateTime,
 	EffectiveEndDate        System.DateTime,
-	IsCurrent        		System.Boolean,
+	bytexyz        		System.Boolean,
 	PartitionedBySlice		System.DateTime,
     INDEX clx_SomeKey CLUSTERED(SomeKey ASC)
 	PARTITIONED BY (PartitionedBySlice)

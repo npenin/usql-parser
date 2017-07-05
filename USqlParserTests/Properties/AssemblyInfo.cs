@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("USqlParserDriver")]
+[assembly: AssemblyTitle("USqlParserTests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("USqlParserDriver")]
+[assembly: AssemblyProduct("USqlParserTests")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("146d5921-56f6-4eb2-9d45-f2684947a832")]
+[assembly: Guid("0ba2732f-9803-4d4c-b7cf-7684e87d8def")]
 
 // Version information for an assembly consists of the following four values:
 //

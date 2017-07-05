@@ -1,19 +1,22 @@
-﻿using AnirudhRb.USqlParser;
+﻿using AnirudhRb.USql;
 using Antlr4.Runtime;
-using System;
-using System.IO;
 using Antlr4.Runtime.Misc;
+using System;
 
-namespace USqlParserDriver
+namespace USqlParserTests
 {
-    public class Program
+    class USqlScriptParseHelper
     {
-        public static void Main(string[] args)
+        public void Parse(string script)
         {
-            Stream inputStream = Console.OpenStandardInput();
-            AntlrInputStream input = new AntlrInputStream(inputStream);
+            AntlrInputStream input = new AntlrInputStream(script);
             USqlLexer uSqlLexer = new USqlLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(uSqlLexer);
+            /*for (IToken token = uSqlLexer.NextToken(); token.Type != TokenConstants.Eof; token = uSqlLexer.NextToken())
+            {
+                Console.WriteLine(token.Text + " " + USqlLexer.DefaultVocabulary.GetSymbolicName(token.Type));
+            }
+            return;*/
             USqlParser parser = new USqlParser(tokens);
             parser.ErrorHandler = new BailErrorStrategy();
             parser.AddErrorListener(new ParserErrorListener());
@@ -50,7 +53,7 @@ namespace USqlParserDriver
         }
     }
 
-    public class FullListener : USqlBaseListener
+    public class FullListener : USqlParserBaseListener
     {
         public override void ExitUseDatabaseStatement([NotNull] USqlParser.UseDatabaseStatementContext context)
         {
@@ -93,26 +96,37 @@ namespace USqlParserDriver
                 Console.WriteLine("    " + columnDef.quotedOrUnquotedIdentifier().GetText() + " " + columnDef.builtInType().GetText());
             }
 
-            Console.Write("Index {0} on ", context.tableWithSchema().tableIndex().quotedOrUnquotedIdentifier().GetText());
-            foreach (var x in context.tableWithSchema().tableIndex().sortItemList().sortItem())
+            if (context.tableWithSchema().tableIndex() != null)
             {
-                Console.Write("{0} {1} ", x.quotedOrUnquotedIdentifier().GetText(), (x.sortDirection() == null) ? "Default direction" : x.sortDirection().GetText());
+                Console.Write("Index {0} on ", context.tableWithSchema().tableIndex().quotedOrUnquotedIdentifier().GetText());
+                foreach (var x in context.tableWithSchema().tableIndex().sortItemList().sortItem())
+                {
+                    Console.Write("{0} {1} ", x.quotedOrUnquotedIdentifier().GetText(), (x.sortDirection() == null) ? "Default direction" : x.sortDirection().GetText());
+                }
+                Console.WriteLine();
             }
-            Console.WriteLine();
 
-            Console.Write("Partitioned by: ");
-            foreach (var x in context.tableWithSchema().partitionSpecification().identifierList().quotedOrUnquotedIdentifier())
+            if (context.tableWithSchema().partitionSpecification() != null)
             {
-                Console.Write("{0}, ", x.GetText());
+                Console.Write("Partitioned by: ");
+                foreach (var x in context.tableWithSchema().partitionSpecification().identifierList().quotedOrUnquotedIdentifier())
+                {
+                    Console.Write("{0}, ", x.GetText());
+                }
+                Console.WriteLine("\b\b");
             }
-            Console.WriteLine("\b\b");
 
-            Console.Write("Distributed by: ");
-            foreach (var x in context.tableWithSchema().partitionSpecification().distributionSpecification().distributionScheme().identifierList().quotedOrUnquotedIdentifier())
+
+            if (context.tableWithSchema().partitionSpecification() != null && context.tableWithSchema().partitionSpecification().distributionSpecification() != null)
             {
-                Console.Write("{0}, ", x.GetText());
+                Console.Write("Distributed by: ");
+                foreach (var x in context.tableWithSchema().partitionSpecification().distributionSpecification().distributionScheme().identifierList().quotedOrUnquotedIdentifier())
+                {
+                    Console.Write("{0}, ", x.GetText());
+                }
+                Console.WriteLine("\b\b");
             }
-            Console.WriteLine("\b\b");
+
             Console.WriteLine("Create table done");
         }
 

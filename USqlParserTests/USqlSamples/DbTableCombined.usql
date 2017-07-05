@@ -8,5 +8,3 @@ CREATE TABLE dbo.Employees
     Salary int?,
     StartDate DateTime
 );
-
-CREATE DATABASE HelloW;
