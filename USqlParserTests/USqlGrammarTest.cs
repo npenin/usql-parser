@@ -12,9 +12,13 @@ namespace USqlParserTests
         public void TestAllSamples()
         {
             var binariesDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
-            if (binariesDirectory.StartsWith(@"file:\"))
+            if (binariesDirectory != null && binariesDirectory.StartsWith(@"file:\"))
             {
                 binariesDirectory = binariesDirectory.Substring(6);
+            }
+            else if (binariesDirectory == null)
+            {
+                Assert.Fail("Binaries directory is null");
             }
 
             var samplesDirectory = Path.Combine(binariesDirectory, "USqlSamples");
@@ -23,7 +27,7 @@ namespace USqlParserTests
             {
                 Console.WriteLine(file);
                 var script = File.ReadAllText(file);
-                new USqlScriptParseHelper().Parse(script);
+                USqlScriptParseHelper.Parse(script);
             }
 
             Assert.IsNull(null);

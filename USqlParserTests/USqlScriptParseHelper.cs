@@ -5,20 +5,15 @@ using System;
 
 namespace USqlParserTests
 {
-    class USqlScriptParseHelper
+    static class USqlScriptParseHelper
     {
-        public void Parse(string script)
+        public static void Parse(string script)
         {
-            AntlrInputStream input = new AntlrInputStream(script);
-            USqlLexer uSqlLexer = new USqlLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(uSqlLexer);
-            /*for (IToken token = uSqlLexer.NextToken(); token.Type != TokenConstants.Eof; token = uSqlLexer.NextToken())
-            {
-                Console.WriteLine(token.Text + " " + USqlLexer.DefaultVocabulary.GetSymbolicName(token.Type));
-            }
-            return;*/
-            USqlParser parser = new USqlParser(tokens);
-            parser.ErrorHandler = new BailErrorStrategy();
+            var input = new AntlrInputStream(script);
+            var uSqlLexer = new USqlLexer(input);
+            uSqlLexer.AddErrorListener(new LexerErrorListener());
+            var tokens = new CommonTokenStream(uSqlLexer);
+            var parser = new USqlParser(tokens) {ErrorHandler = new BailErrorStrategy()};
             parser.AddErrorListener(new ParserErrorListener());
             parser.AddParseListener(new FullListener());
             try
@@ -27,8 +22,18 @@ namespace USqlParserTests
             }
             catch (ParseCanceledException e)
             {
-                Console.WriteLine("Offending token: " + ((InputMismatchException)e.InnerException).OffendingToken.Text);
-                throw e;
+                var inputMismatchException = (InputMismatchException) e.InnerException;
+                if (inputMismatchException != null)
+                    Console.WriteLine("Offending token: " + inputMismatchException.OffendingToken.Text);
+                throw;
+            }
+        }
+
+        private static void GetTokens(ITokenSource uSqlLexer)
+        {
+            for (IToken token = uSqlLexer.NextToken(); token.Type != TokenConstants.Eof; token = uSqlLexer.NextToken())
+            {
+                Console.WriteLine(token.Text + " " + USqlLexer.DefaultVocabulary.GetSymbolicName(token.Type));
             }
         }
     }
@@ -88,7 +93,7 @@ namespace USqlParserTests
 
         public override void ExitCreateManagedTableWithSchemaStatement([NotNull] USqlParser.CreateManagedTableWithSchemaStatementContext context)
         {
-            base.EnterCreateManagedTableWithSchemaStatement(context);
+            base.ExitCreateManagedTableWithSchemaStatement(context);
 
             Console.WriteLine("Creating table: {0}", context.tableName().GetText());
             foreach (var columnDef in context.tableWithSchema().columnDefinition())
@@ -138,7 +143,7 @@ namespace USqlParserTests
 
         public override void ExitAlterTableAddDropPartitionStatement([NotNull] USqlParser.AlterTableAddDropPartitionStatementContext context)
         {
-            base.EnterAlterTableAddDropPartitionStatement(context);
+            base.ExitAlterTableAddDropPartitionStatement(context);
             Console.Write("Altering table with partition: " + context.multipartIdentifier().GetText());
             Console.Write("Operation: {0}. ", (context.ADD() == null) ? "DROP" : "ADD");
             Console.Write("Partitions: ");

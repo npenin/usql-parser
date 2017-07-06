@@ -8,7 +8,7 @@
     <ProjectGuid>{E56F1354-3162-4242-9C23-75AB16A90BE1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>USqlParser</RootNamespace>
+    <RootNamespace>AnirudhRb.USql</RootNamespace>
     <AssemblyName>USqlParser</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
