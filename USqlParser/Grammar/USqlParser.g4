@@ -147,7 +147,6 @@ staticExpression
 	| IntegerLiteral
 	| RealLiteral
 	| UserVariable
-	| GuidInitializer
 	| staticVariable
 	;
 

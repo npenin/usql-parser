@@ -178,6 +178,51 @@ fragment RealTypeSuffix
 	: 'F' | 'f' | 'D' | 'd' | 'M' | 'm'
 	;
 
+fragment SingleCharacter
+	: ~( '\u0027' | '\'' | '\\' | '\u005c' | '\n' )
+	;
+
+fragment SimpleEscapeSequence
+	: '\\\''
+	| '\\"'
+	| '\\\\'
+	| '\\0'
+	| '\\a'
+	| '\\b'
+	| '\\f'
+	| '\\n'
+	| '\\r'
+	| '\\t'
+	| '\\v'
+	;
+
+fragment HexadecimalEscapeSequence
+	: '\\x' HexDigit ( HexDigit )? ( HexDigit )? ( HexDigit )?
+	;
+
+fragment UnicodeEscapeSequence
+	: '\\u' HexDigit HexDigit HexDigit HexDigit
+	| '\\u' HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit
+	;
+
+fragment Character
+	: SingleCharacter
+	| SimpleEscapeSequence
+	| HexadecimalEscapeSequence
+	| UnicodeEscapeSequence
+	;
+
+fragment SingleRegularStringLiteralCharacter
+	: ~( '\u0022' | '"' | '\\' | '\u005c' | '\n' )
+	;
+
+fragment RegularStringLiteralCharacter
+	: SingleRegularStringLiteralCharacter
+	| SimpleEscapeSequence
+	| HexadecimalEscapeSequence
+	| UnicodeEscapeSequence
+	;
+
 NullLiteral
 	: 'null'
 	;
@@ -215,11 +260,11 @@ DecimalIntegerLiteral
 	;
 
 CharLiteral
-	: '\'' . '\''
+	: '\'' Character '\''
 	;
 
 StringLiteral
-	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '_' )+ '"'
+	: '"' ( RegularStringLiteralCharacter )* '"'
 	;
 
 GuidLiteral
