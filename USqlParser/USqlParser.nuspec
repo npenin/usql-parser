@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AnirudhRb.USqlParser</id>
-    <version>1.2.3</version>
+    <version>$version$</version>
     <title>$title$</title>
     <authors>Anirudh Rayabharam</authors>
     <owners>Anirudh Rayabharam</owners>
