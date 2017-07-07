@@ -142,12 +142,13 @@ staticVariable
  * TODO: Include StaticVariable and BinaryLiteral. Need to figure it out.
  */
 staticExpression
-	: ( LPAREN builtInType RPAREN )? ( StringLiteral
+	: StringLiteral
 	| CharLiteral
-	| NumberLiteral
+	| IntegerLiteral
+	| RealLiteral
 	| UserVariable
 	| GuidInitializer
-	| staticVariable )
+	| staticVariable
 	;
 
 staticExpressionList
@@ -185,11 +186,12 @@ integrityClause
 	;
 
 expression
-	: staticExpression
+	: variable
+	| ( LPAREN builtInType RPAREN )? literal
 	;
 
 expressionList
-	: staticExpression ( COMMA staticExpression )*
+	: expression ( COMMA expression )*
 	;
 
 rowConstructor
@@ -211,4 +213,12 @@ insertSource
 insertStatement
 	: INSERT INTO multipartIdentifier ( LPAREN identifierList RPAREN )?
 	  ( partitionLabel | integrityClause )? insertSource SEMICOLON
+	;
+
+literal
+	: StringLiteral
+	| IntegerLiteral
+	| RealLiteral
+	| BooleanLiteral
+	| CharLiteral
 	;

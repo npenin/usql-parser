@@ -151,6 +151,69 @@ fragment DateTime
 /*
  * Literals
  */
+fragment DecimalDigit
+	: '0' .. '9'
+	;
+
+fragment HexDigit
+	: DecimalDigit
+	| 'a' .. 'f'
+	| 'A' .. 'F'
+	;
+
+fragment IntegerTypeSuffix
+	:  'U' | 'u' | 'L' | 'l' | 'UL' | 'uL' | 'Ul' | 'ul' | 'LU' | 'Lu' | 'lU' | 'lu'
+	;
+
+fragment Sign
+	: '+' | '-'
+	;
+
+fragment ExponentPart
+	: 'e' ( Sign )? DecimalDigits
+	| 'E' ( Sign )? DecimalDigits
+	;
+
+fragment RealTypeSuffix
+	: 'F' | 'f' | 'D' | 'd' | 'M' | 'm'
+	;
+
+NullLiteral
+	: 'null'
+	;
+
+BooleanLiteral
+	: 'true' | 'false'
+	;
+
+IntegerLiteral
+	: DecimalIntegerLiteral
+	| HexadecimalIntegerLiteral
+	;
+
+RealLiteral
+	: DecimalDigits '.' DecimalDigits ( ExponentPart )? ( RealTypeSuffix )?
+	| '.' DecimalDigits ( ExponentPart )? ( RealTypeSuffix )?
+	| DecimalDigits ExponentPart ( RealTypeSuffix )?
+	| DecimalDigits RealTypeSuffix
+	;
+
+HexDigits
+	: HexDigit ( HexDigit )*
+	;
+
+HexadecimalIntegerLiteral
+	: '0x' HexDigits ( IntegerTypeSuffix )?
+	;
+
+DecimalDigits
+	: DecimalDigit ( DecimalDigit )*
+	;
+
+DecimalIntegerLiteral
+	: DecimalDigits ( IntegerTypeSuffix )?
+	;
+
 CharLiteral
 	: '\'' . '\''
 	;
@@ -161,14 +224,6 @@ StringLiteral
 
 GuidLiteral
 	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '-' | '0'..'9' )+ '"'
-	;
-
-NumberLiteral
-	: ( '-' )? ( NumberCharacter )+
-	;
-
-NullLiteral
-	: 'null'
 	;
 
 GuidInitializer
