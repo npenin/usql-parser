@@ -32,5 +32,15 @@ namespace USqlParserTests
 
             Assert.IsNull(null);
         }
+
+        [TestMethod]
+        [Ignore]
+        public void TestSingleFile()
+        {
+            var script = File.ReadAllText(@"C:\Users\anrayabh\Source\Repos\USqlParser\USqlParserTests\bin\Debug\USqlSamples\Script6.usql");
+            USqlScriptParseHelper.Parse(script, false);
+
+            Assert.IsNull(null);
+        }
     }
 }

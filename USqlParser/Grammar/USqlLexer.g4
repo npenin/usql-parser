@@ -144,6 +144,10 @@ VIOLATION
 	: 'VIOLATION'
 	;
 
+NEW
+	: 'new'
+	;
+
 fragment DateTime
 	: 'DateTime'
 	;
@@ -151,28 +155,120 @@ fragment DateTime
 /*
  * Literals
  */
-CharLiteral
-	: '\'' . '\''
+fragment DecimalDigit
+	: '0' .. '9'
 	;
 
-StringLiteral
-	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '_' )+ '"'
+fragment HexDigit
+	: DecimalDigit
+	| 'a' .. 'f'
+	| 'A' .. 'F'
 	;
 
-GuidLiteral
-	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '-' | '0'..'9' )+ '"'
+fragment IntegerTypeSuffix
+	:  'U' | 'u' | 'L' | 'l' | 'UL' | 'uL' | 'Ul' | 'ul' | 'LU' | 'Lu' | 'lU' | 'lu'
 	;
 
-NumberLiteral
-	: ( '-' )? ( NumberCharacter )+
+fragment Sign
+	: '+' | '-'
+	;
+
+fragment ExponentPart
+	: 'e' ( Sign )? DecimalDigits
+	| 'E' ( Sign )? DecimalDigits
+	;
+
+fragment RealTypeSuffix
+	: 'F' | 'f' | 'D' | 'd' | 'M' | 'm'
+	;
+
+fragment SingleCharacter
+	: ~( '\u0027' | '\'' | '\\' | '\u005c' | '\n' )
+	;
+
+fragment SimpleEscapeSequence
+	: '\\\''
+	| '\\"'
+	| '\\\\'
+	| '\\0'
+	| '\\a'
+	| '\\b'
+	| '\\f'
+	| '\\n'
+	| '\\r'
+	| '\\t'
+	| '\\v'
+	;
+
+fragment HexadecimalEscapeSequence
+	: '\\x' HexDigit ( HexDigit )? ( HexDigit )? ( HexDigit )?
+	;
+
+fragment UnicodeEscapeSequence
+	: '\\u' HexDigit HexDigit HexDigit HexDigit
+	| '\\u' HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit
+	;
+
+fragment Character
+	: SingleCharacter
+	| SimpleEscapeSequence
+	| HexadecimalEscapeSequence
+	| UnicodeEscapeSequence
+	;
+
+fragment SingleRegularStringLiteralCharacter
+	: ~( '\u0022' | '"' | '\\' | '\u005c' | '\n' )
+	;
+
+fragment RegularStringLiteralCharacter
+	: SingleRegularStringLiteralCharacter
+	| SimpleEscapeSequence
+	| HexadecimalEscapeSequence
+	| UnicodeEscapeSequence
 	;
 
 NullLiteral
 	: 'null'
 	;
 
-GuidInitializer
-	: 'new Guid(' GuidLiteral ')'
+BooleanLiteral
+	: 'true' | 'false'
+	;
+
+IntegerLiteral
+	: DecimalIntegerLiteral
+	| HexadecimalIntegerLiteral
+	;
+
+RealLiteral
+	: DecimalDigits '.' DecimalDigits ( ExponentPart )? ( RealTypeSuffix )?
+	| '.' DecimalDigits ( ExponentPart )? ( RealTypeSuffix )?
+	| DecimalDigits ExponentPart ( RealTypeSuffix )?
+	| DecimalDigits RealTypeSuffix
+	;
+
+HexDigits
+	: HexDigit ( HexDigit )*
+	;
+
+HexadecimalIntegerLiteral
+	: '0x' HexDigits ( IntegerTypeSuffix )?
+	;
+
+DecimalDigits
+	: DecimalDigit ( DecimalDigit )*
+	;
+
+DecimalIntegerLiteral
+	: DecimalDigits ( IntegerTypeSuffix )?
+	;
+
+CharLiteral
+	: '\'' Character '\''
+	;
+
+StringLiteral
+	: '"' ( RegularStringLiteralCharacter )* '"'
 	;
 
 NumericTypeNonNullable
@@ -286,3 +382,11 @@ COMMA
 EQUALS
 	: '='
 	;
+
+PLUS:			'+';
+MINUS:			'-';
+GT:				'>';
+LT:				'<';
+LCURLY:			'{';
+RCURLY:			'}';
+COLON:			':';
