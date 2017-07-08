@@ -16,7 +16,7 @@ VALUES(
     "Unknown",
     (long) -1, 
     "Unknown",
-    (long) -1,
+    YoloClass.SomeMember,
     DateTime.Now,
     1,
     @DefaultDate, 

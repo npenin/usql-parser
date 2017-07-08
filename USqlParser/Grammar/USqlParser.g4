@@ -134,9 +134,9 @@ declareVariableStatement
 	: DECLARE variable builtInType EQUALS ~( SEMICOLON )* SEMICOLON
 	; 
 
-staticVariable
+/*staticVariable
 	: builtInType DOT UnquotedIdentifier 
-	;
+	;*/
 
 /*
  * TODO: Include StaticVariable and BinaryLiteral. Need to figure it out.
@@ -147,7 +147,7 @@ staticExpression
 	| IntegerLiteral
 	| RealLiteral
 	| UserVariable
-	| staticVariable
+	| memberAccess
 	;
 
 staticExpressionList
@@ -184,11 +184,6 @@ integrityClause
 	: ON INTEGRITY VIOLATION integrityViolationAction
 	;
 
-expression
-	: variable
-	| ( LPAREN builtInType RPAREN )? literal
-	;
-
 expressionList
 	: expression ( COMMA expression )*
 	;
@@ -221,4 +216,166 @@ literal
 	| BooleanLiteral
 	| CharLiteral
 	| NullLiteral
+	;
+
+/*
+ * C# types
+ */
+csNamespaceName
+	: csNamespaceOrTypeName
+	;
+
+csTypeName
+	: csNamespaceOrTypeName
+	;
+
+csNamespaceOrTypeName
+	: UnquotedIdentifier ( csTypeArgumentList )?
+	| UnquotedIdentifier ( csTypeArgumentList )? '.' csNamespaceOrTypeName
+	;
+
+csType
+	: csValueType
+	| csReferenceType
+	| csTypeParameter
+	;
+
+csValueType
+	: csStructType
+	| csEnumType
+	;
+
+csStructType
+	: csTypeName
+	| csSimpleType
+	;
+
+csSimpleType
+	: simpleType
+	;
+
+csEnumType
+	: csTypeName
+	;
+
+csReferenceType
+	: csClassType
+	| csInterfaceType
+	| csDelegateType
+	;
+
+csClassType
+	: csTypeName
+	;
+
+csInterfaceType
+	: csTypeName
+	;
+
+csDelegateType
+	: csTypeName
+	;
+
+csTypeArgumentList
+	: LT csTypeArguments GT
+	;
+
+csTypeArguments
+	: csTypeArgument ( COMMA csTypeArgument )*
+	;
+
+csTypeArgument
+	: csType
+	;
+
+csTypeParameter
+	: UnquotedIdentifier
+	;
+
+/*
+ * Expressions
+ */
+expression
+	: unaryExpression
+	| memberAccess
+	;
+
+primaryExpression
+	: primaryNoArrayCreationExpression
+	;
+
+primaryNoArrayCreationExpression
+	: literal
+	| simpleName
+	| variable
+	| paranthesizedExpression
+	| objectCreationExpression
+	;
+
+paranthesizedExpression
+	: LPAREN expression RPAREN
+	;
+
+unaryExpression
+	: primaryExpression
+	| PLUS unaryExpression
+	| MINUS unaryExpression
+	| castExpression
+	;
+
+castExpression
+	: LPAREN builtInType RPAREN unaryExpression
+	;
+
+objectCreationExpression
+	: NEW csType ( LPAREN argumentList RPAREN )? ( objectOrCollectionInitializer )?
+	| NEW csType objectOrCollectionInitializer
+	;
+
+// Will add collection initializer later
+objectOrCollectionInitializer
+	: objectInitializer
+	;
+
+objectInitializer
+	: LCURLY ( memberInitializerList )? RCURLY
+	| LCURLY memberInitializerList COMMA RCURLY
+	;
+
+memberInitializerList
+	: memberInitializer ( COMMA memberInitializer )*
+	;
+
+memberInitializer
+	: UnquotedIdentifier EQUALS initializerValue
+	;
+
+initializerValue
+	: expression
+	| objectOrCollectionInitializer
+	;
+
+argumentList
+	: argument ( COMMA argument )*
+	;
+
+argument
+	: ( argumentName )? argumentValue
+	;
+
+argumentName
+	: UnquotedIdentifier COLON
+	;
+
+argumentValue
+	: expression
+	;
+
+memberAccess
+	: primaryExpression DOT UnquotedIdentifier ( csTypeArgumentList )?
+	| builtInType DOT UnquotedIdentifier ( csTypeArgumentList )?
+	;
+
+simpleName
+	: UnquotedIdentifier ( csTypeArgumentList )?
 	;

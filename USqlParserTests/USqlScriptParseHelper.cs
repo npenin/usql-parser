@@ -2,16 +2,23 @@
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using System;
+using System.Text;
 
 namespace USqlParserTests
 {
     static class USqlScriptParseHelper
     {
-        public static void Parse(string script)
+        public static void Parse(string script, bool printTokens = false)
         {
             var input = new AntlrInputStream(script);
             var uSqlLexer = new USqlLexer(input);
             uSqlLexer.AddErrorListener(new LexerErrorListener());
+
+            if (printTokens)
+            {
+                PrintTokens(uSqlLexer);
+            }
+
             var tokens = new CommonTokenStream(uSqlLexer);
             var parser = new USqlParser(tokens) {ErrorHandler = new BailErrorStrategy()};
             parser.AddErrorListener(new ParserErrorListener());
@@ -24,14 +31,17 @@ namespace USqlParserTests
             {
                 var inputMismatchException = (InputMismatchException) e.InnerException;
                 if (inputMismatchException != null)
-                    Console.WriteLine("Offending token: " + inputMismatchException.OffendingToken.Text);
+                {
+                    Console.WriteLine("Offending token: " + inputMismatchException.OffendingToken.Text, inputMismatchException);
+                    throw inputMismatchException;
+                }
                 throw;
             }
         }
 
-        private static void GetTokens(ITokenSource uSqlLexer)
+        private static void PrintTokens(ITokenSource tokenSource)
         {
-            for (IToken token = uSqlLexer.NextToken(); token.Type != TokenConstants.Eof; token = uSqlLexer.NextToken())
+            for (IToken token = tokenSource.NextToken(); token.Type != TokenConstants.Eof; token = tokenSource.NextToken())
             {
                 Console.WriteLine(token.Text + " " + USqlLexer.DefaultVocabulary.GetSymbolicName(token.Type));
             }
@@ -168,7 +178,24 @@ namespace USqlParserTests
         public override void ExitInsertStatement([NotNull] USqlParser.InsertStatementContext context)
         {
             base.ExitInsertStatement(context);
-            Console.WriteLine("Inserting into {0}, values {1}", context.multipartIdentifier().GetText(), context.insertSource().GetText());
+            var valuesText = new StringBuilder();
+            foreach (var expression in context.insertSource().tableValueConstructorExpression().rowConstructorList().rowConstructor(0).expressionList().expression())
+            {
+                valuesText.Append($" {expression.GetText()} ");
+            }
+            Console.WriteLine("Inserting into {0}, values {1}", context.multipartIdentifier().GetText(), valuesText);
+        }
+
+        public override void EnterMemberAccess(USqlParser.MemberAccessContext context)
+        {
+            base.EnterMemberAccess(context);
+            Console.WriteLine("Entered memberAccess rule for: {0}", context.GetText());
+        }
+
+        public override void ExitPrimaryExpression(USqlParser.PrimaryExpressionContext context)
+        {
+            base.ExitPrimaryExpression(context);
+            Console.WriteLine("Primary expression: {0}", context.GetText());
         }
     }
 }

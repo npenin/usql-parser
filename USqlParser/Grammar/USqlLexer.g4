@@ -144,6 +144,10 @@ VIOLATION
 	: 'VIOLATION'
 	;
 
+NEW
+	: 'new'
+	;
+
 fragment DateTime
 	: 'DateTime'
 	;
@@ -267,14 +271,6 @@ StringLiteral
 	: '"' ( RegularStringLiteralCharacter )* '"'
 	;
 
-GuidLiteral
-	: '"' ( 'a' .. 'z' | 'A' .. 'Z' | '-' | '0'..'9' )+ '"'
-	;
-
-GuidInitializer
-	: 'new Guid(' GuidLiteral ')'
-	;
-
 NumericTypeNonNullable
 	: 'byte' | 'sbyte' | 'int' | 'uint' | 'long' | 'ulong' | 'float' | 'double' | 'decimal' | 'short' | 'ushort' | 'System.Int32'
 	;
@@ -386,3 +382,11 @@ COMMA
 EQUALS
 	: '='
 	;
+
+PLUS:			'+';
+MINUS:			'-';
+GT:				'>';
+LT:				'<';
+LCURLY:			'{';
+RCURLY:			'}';
+COLON:			':';
