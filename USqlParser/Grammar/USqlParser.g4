@@ -220,4 +220,5 @@ literal
 	| RealLiteral
 	| BooleanLiteral
 	| CharLiteral
+	| NullLiteral
 	;
