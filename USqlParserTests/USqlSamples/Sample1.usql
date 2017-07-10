@@ -1,0 +1,110 @@
+﻿USE DATABASE SomeDatabase;
+
+CREATE SCHEMA IF NOT EXISTS SomeSchema;
+
+DROP TABLE IF EXISTS dbo.Employees;
+
+CREATE TABLE dbo.Employees
+(
+    EmpID int,
+    EmpName string,
+    DeptID int,
+    Salary int?,
+    StartDate DateTime,
+    INDEX clx_EmpID CLUSTERED(EmpID ASC)
+)
+DISTRIBUTED BY HASH(EmpID);
+
+CREATE TABLE dbo.Employees
+(
+    EmpID int,
+    [EmpName/Xyz] string,
+    DeptID int,
+    Salary int?,
+    StartDate DateTime,
+    INDEX clx_EmpID CLUSTERED(EmpID ASC) DISTRIBUTED BY HASH(EmpID)
+);
+
+
+CREATE DATABASE IF NOT EXISTS TestReferenceDB;
+USE DATABASE TestReferenceDB; 
+
+DROP TABLE IF EXISTS dbo.Orders;
+CREATE TABLE dbo.Orders
+(
+    OrderID int,
+    CustomerID int,
+    OrderDetailID int,
+    OrderTotal double,
+    OrderDate DateTime,
+    INDEX clx_OrderID_CustomerID CLUSTERED(OrderID, CustomerID ASC)
+)
+PARTITIONED BY (OrderDate)
+DISTRIBUTED BY HASH (OrderID, CustomerID) 
+INTO 10;
+
+DECLARE @partition1 DateTime = new DateTime(2016, 01, 01, 00,00,00,00, DateTimeKind.Utc);
+DECLARE @partition2 DateTime = @partition1.AddDays(1);
+ALTER TABLE TestReferenceDB.dbo.Orders
+ADD IF NOT EXISTS PARTITION(@partition1), PARTITION(@partition2);
+
+INSERT INTO TestReferenceDB.dbo.Orders
+(OrderID, CustomerID, OrderDetailID, OrderTotal)
+PARTITION(@partition1)
+VALUES
+(1, 1, 1, 23098.90),
+(2, 1, 2, 2456.99);
+
+INSERT INTO TestReferenceDB.dbo.Orders
+(OrderID, CustomerID, OrderDetailID, OrderTotal)
+PARTITION(@partition2)
+VALUES
+(3, 1, 3, 535.00),
+(4, 2, 1, 35000.76);
+
+INSERT INTO TestReferenceDB.dbo.Orders
+(OrderID, CustomerID, OrderDetailID, OrderTotal, OrderDate)
+ON INTEGRITY VIOLATION IGNORE
+VALUES
+(5, 4, 1, 3987.00, new DateTime(2016, 01, 02)),
+(6, 3, 1, 24000.00, new DateTime(2016, 01, 03));
+
+DECLARE @badPartition DateTime = new DateTime(2100, 01, 01, 00,00,00,00, DateTimeKind.Utc);
+ALTER TABLE TestReferenceDB.dbo.Orders
+ADD PARTITION(@badPartition);
+
+INSERT INTO TestReferenceDB.dbo.Orders
+(OrderID, CustomerID, OrderDetailID, OrderTotal, OrderDate)
+ON INTEGRITY VIOLATION MOVE TO PARTITION (@badPartition)
+VALUES
+(7, 3, 2, 2000.00, new DateTime(2016, 01, 02)),
+(8, 7, 1, 54279.00, new DateTime(2016, 01, 03));
+
+DECLARE @SliceDate DateTime=new DateTime(1901,01,01,00,00,00,00,DateTimeKind.Utc);
+
+INSERT INTO fajseef.mmls012iejs(
+	[Key],
+	[CId],
+    [Coype],
+    [Pregory],
+	[Status], 
+	[Prome], 
+	[ComName], 
+	[CompryName], 
+	[PltedDate],
+	[PlDate]
+)PARTITION(@DefaultPartition)
+VALUES("UNKNOWN",new Guid("00000000-0000-0000-0000-000000000000"),(long)-1,DateTime.Now,"UNKNOWN","UNKNOWN","UNKNOWN","UNKNOWN",@DefaultPartition, @DefaultPartition);
+
+CREATE TABLE IF NOT EXISTS SomeScchema.xYZ
+(
+	HelloWorld        		System.Int32,
+	SomeKey        		System.Int32?,
+	EffectiveStartDate      System.DateTime,
+	EffectiveEndDate        System.DateTime,
+	bytexyz        		System.Boolean,
+	PartitionedBySlice		System.DateTime,
+    INDEX clx_SomeKey CLUSTERED(SomeKey ASC)
+	PARTITIONED BY (PartitionedBySlice)
+	DISTRIBUTED BY HASH(SomeKey)
+);

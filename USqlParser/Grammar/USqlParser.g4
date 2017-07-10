@@ -107,7 +107,7 @@ distributionScheme
 	;
 
 distributionSpecification
-	: DISTRIBUTED ( BY )? distributionScheme
+	: DISTRIBUTED ( BY )? distributionScheme ( INTO IntegerLiteral )?
 	;
 
 partitionSpecification

@@ -121,7 +121,7 @@ namespace USqlParserTests
                 Console.WriteLine();
             }
 
-            if (context.tableWithSchema().partitionSpecification() != null)
+            if (context.tableWithSchema().partitionSpecification() != null && context.tableWithSchema().partitionSpecification().identifierList() != null)
             {
                 Console.Write("Partitioned by: ");
                 foreach (var x in context.tableWithSchema().partitionSpecification().identifierList().quotedOrUnquotedIdentifier())
